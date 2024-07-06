@@ -1,4 +1,30 @@
-import { useState } from 'react'
+import { useState } from 'react';
+
+const StatisticLine = ({text, value}) => {
+  return <p>{text}: {value}</p>
+}
+
+const Statistics = ({good, neutral, bad, total, calculateAverage}) => {
+  if(total === 0) {
+    return <p>No feedback given</p>
+  } else {
+    return (
+      <div>
+        <h2>Statistics</h2>
+        <StatisticLine text="Good" value={good}/>
+        <StatisticLine text="Neutral" value={neutral}/>
+        <StatisticLine text="Bad" value={bad}/>
+        <StatisticLine text="All" value={total}/>
+        <StatisticLine text="Average" value={calculateAverage() || 0}/>
+        <StatisticLine text="Positive" value={good == 0 ? 0 : `${(good / total) * 100} %`}/>
+      </div>
+    )
+  }
+}
+
+const Button = ({addStatistics, statsType, buttonText}) => {
+  return  <button onClick={() => addStatistics(statsType)}>{buttonText}</button>
+}
 
 const App = () => {
   // save clicks of each button to its own state
@@ -27,31 +53,13 @@ const App = () => {
     return (good - bad) / total;
   }
 
-  const Statistics = ({good, neutral, bad, total}) => {
-    if(total === 0) {
-      return <p>No feedback given</p>
-    } else {
-      return (
-        <div>
-          <h2>Statistics</h2>
-          <p>Good: {good}</p>
-          <p>Neutral: {neutral}</p>
-          <p>Bad: {bad}</p>
-          <p>All: {good + bad + neutral}</p>
-          <p>Average: {calculateAverage() || 0}</p>
-          <p>Positive: {good == 0 ? 0 : `${(good / total) * 100} %`}</p>
-        </div>
-      )
-    }
-  }
-
   return (
     <div>
       <h2>Give feedback</h2>
-      <button onClick={() => addStatistics("good")}>good</button>
-      <button onClick={() => addStatistics("neutral")}>neutral</button>
-      <button onClick={() => addStatistics("bad")}>bad</button>
-      <Statistics good={good} neutral={neutral} bad={bad} total={total}/>
+      <Button addStatistics={addStatistics} statsType="good" buttonText="good"/>
+      <Button addStatistics={addStatistics} statsType="neutral" buttonText="neutral"/>
+      <Button addStatistics={addStatistics} statsType="bad" buttonText="bad"/>
+      <Statistics good={good} neutral={neutral} bad={bad} total={total} calculateAverage={calculateAverage}/>
       
     </div>
   )
