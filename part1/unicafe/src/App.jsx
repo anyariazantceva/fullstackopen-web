@@ -24,16 +24,11 @@ const App = () => {
   }
 
   const calculateAverage = () => {
-    return good * 1 + neutral * 0 + bad * (-1)/ total;
+    return (good - bad) / total;
   }
 
-  return (
-    <div>
-      <h2>Give feedback</h2>
-      <button onClick={() => addStatistics("good")}>good</button>
-      <button onClick={() => addStatistics("neutral")}>neutral</button>
-      <button onClick={() => addStatistics("bad")}>bad</button>
-
+  const Statistics = ({good, neutral, bad, total}) => {
+      return (
       <div>
         <h2>Statistics</h2>
         <p>Good: {good}</p>
@@ -41,8 +36,18 @@ const App = () => {
         <p>Bad: {bad}</p>
         <p>All: {good + bad + neutral}</p>
         <p>Average: {calculateAverage() || 0}</p>
-        <p>Positive: {`${parseFloat(good / total) * 100 } %`}</p>
+        <p>Positive: {good == 0 ? 0 : `${(good / total) * 100} %`}</p>
       </div>
+    )}
+
+  return (
+    <div>
+      <h2>Give feedback</h2>
+      <button onClick={() => addStatistics("good")}>good</button>
+      <button onClick={() => addStatistics("neutral")}>neutral</button>
+      <button onClick={() => addStatistics("bad")}>bad</button>
+      <Statistics good={good} neutral={neutral} bad={bad}/>
+      
     </div>
   )
 }
