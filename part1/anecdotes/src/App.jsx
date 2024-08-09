@@ -15,6 +15,9 @@ const App = () => {
   const [selected, setSelected] = useState(0);
   let randomNumber = Math.floor(Math.random() * 9);
   const [points, setPoints] = useState(new Uint8Array(8));
+
+  const max = Math.max(...points)
+  const index = points.indexOf(max)
   
   const voteAnecdote = () => {
     let copyPoints = [...points];
@@ -22,11 +25,16 @@ const App = () => {
     setPoints(copyPoints);
   }
 
+  
+
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <p>{anecdotes[selected]}</p>
       <button onClick={voteAnecdote}>Vote</button>
       <button onClick={() => setSelected(randomNumber)}>Next anecdote</button>
+      <h2>Anecdote with most votes</h2>
+      <p>{anecdotes[index]}</p>
     </div>
   )
 }
