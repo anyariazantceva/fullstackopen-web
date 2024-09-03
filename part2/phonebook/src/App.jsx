@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
-import axios from 'axios';
 import personsService from "./services/persons";
 
 const App = () => {
@@ -17,7 +16,7 @@ const App = () => {
     .then(persons => {
       setPersons(persons)
     })
-  }, [])
+  }, [persons])
 
   const handleInputChange = (event) => {
     setNewName(event.target.value);
@@ -35,10 +34,26 @@ const App = () => {
     return persons.some(person => person.name === newName)
   }
 
+  const updatePersonNumber = () => {
+    if(confirm(`${newName} ia already added to the phonebook, replace the old number with a new one?`)) {
+      const existingPerson = persons.find(p => p.name === newName)
+      const changedPerson = { ...existingPerson, number: newNumber}
+      personsService
+      .update(existingPerson.id, changedPerson)
+      .then(response => {
+        setPersons(persons.map(person => person.id !== existingPerson.id ? person : response.data))
+    })
+    .catch(error => {
+      console.error('Error updating person:', error);
+      alert('An error occurred while updating the contact.');
+    });
+    }
+  }
+
   const addPerson = (event) => {
     event.preventDefault();
     if (personExists()) {
-      alert(`${newName} ia already added to phonebook`)
+      updatePersonNumber();
     } else {
       const newPerson = {
         name: newName,
@@ -58,6 +73,17 @@ const App = () => {
     setNewNumber('');
   }
 
+  const removePerson = (personId, personName) => {
+    if(confirm(`Delete ${personName}?`)) {
+      personsService
+        .remove(personId)
+        .then(returnedData => {
+          console.log("Person deleted!")
+        })
+    }
+
+  }
+
   
   return (
     <div>
@@ -65,7 +91,7 @@ const App = () => {
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
       <PersonForm addPerson={addPerson} newName={newName} handleInputChange={handleInputChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons persons={persons}/>
+      <Persons persons={persons} removePerson={removePerson}/>
     </div>
   )
 }
