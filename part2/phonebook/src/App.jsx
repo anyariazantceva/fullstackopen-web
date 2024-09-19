@@ -11,7 +11,8 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [newFilter, setNewFilter] = useState('');
-  const [successMessage, setSuccessMessage] = useState('Success!')
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personsService
@@ -47,7 +48,11 @@ const App = () => {
         setPersons(persons.map(person => person.id !== existingPerson.id ? person : response.data))
     })
     .catch(error => {
-      console.error('Error updating person:', error);
+      setErrorMessage(`Information of ${newName} has already been removed from server`);
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+
       alert('An error occurred while updating the contact.');
     });
     }
@@ -98,6 +103,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={successMessage}/>
+      <Notification message={errorMessage}/>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
       <PersonForm addPerson={addPerson} newName={newName} handleInputChange={handleInputChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
