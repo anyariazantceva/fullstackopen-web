@@ -57,13 +57,46 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.use(express.json());
 
+const isUniqueName = (name) => {
+    const person = persons.find(person => person.name === name);
+    if(person) {
+        return false
+    } else {
+        return true
+    }
+}
+
 app.post('/api/persons', (request, response) => {
     const personId = Math.floor(Math.random() * 10000)
-    console.log(request.body)
+    const body = request.body
+
+    if (!body.name) {
+        return response.status(400).json({ 
+          error: 'Name is missing' 
+        })
+    }
+
+    if (!body.number) {
+        return response.status(400).json({ 
+          error: 'Number is missing' 
+        })
+    }
+
+    if (!body.name) {
+        return response.status(400).json({ 
+          error: 'Name is missing' 
+        })
+    }
+
+    if(!isUniqueName(body.name)) {
+        return response.status(400).json({ 
+            error: 'Name should be unique' 
+          })
+    }
     const person = {
         id: personId,
-        name: request.body.name,
-        number: request.body.number
+        name: body.name,
+        number: body.number
     }
     
     response.json(person)
