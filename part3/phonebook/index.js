@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan')
 const app = express()
 
 let persons = [
@@ -56,6 +57,7 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.use(express.json());
+app.use(morgan('tiny'));
 
 const isUniqueName = (name) => {
     const person = persons.find(person => person.name === name);
