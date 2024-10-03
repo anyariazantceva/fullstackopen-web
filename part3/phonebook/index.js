@@ -56,9 +56,19 @@ app.delete('/api/persons/:id', (request, response) => {
 
 })
 
+const requestLogger = (request, response, next) => {
+    console.log("Method:", request.method);
+    console.log("Path:  ", request.path);
+    console.log("Body:  ", request.body);
+    console.log("---");
+    next();
+  };
+
 app.use(express.json());
 app.use(morgan('tiny'));
-
+app.use(requestLogger)
+morgan.token("body", req => JSON.stringify(req.body));
+ 
 const isUniqueName = (name) => {
     const person = persons.find(person => person.name === name);
     if(person) {
